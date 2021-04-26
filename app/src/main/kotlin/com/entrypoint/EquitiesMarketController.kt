@@ -7,42 +7,42 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping(path = [ "api/equities" ])
+@RequestMapping(path = ["api/equities"])
 class EquitiesMarketController(
     private val useCase: EquitiesMarketUseCase
 ) {
     @PostMapping
-    fun findAllEquities(@RequestBody equities: EquitiesEntity) : Mono<EquitiesEntity> {
+    fun findAllEquities(@RequestBody equities: EquitiesEntity): Mono<EquitiesEntity> {
         return useCase.insertEquities(equities)
     }
 
     @GetMapping
-    fun findAllEquities() : Flux<EquitiesEntity> {
+    fun findAllEquities(): Flux<EquitiesEntity> {
         return useCase.equities()
     }
 
-    @GetMapping(path = [ "/{id}" ])
-    fun findOneEquities(@PathVariable id: String) : Mono<EquitiesEntity> {
+    @GetMapping(path = ["/{id}"])
+    fun findOneEquities(@PathVariable id: String): Mono<EquitiesEntity> {
         return useCase.equitiesById(id)
     }
 
-    @DeleteMapping(path = [ "/{id}" ])
-    fun deleteOneEquities(@PathVariable id: String) : Mono<Void> {
+    @DeleteMapping(path = ["/{id}"])
+    fun deleteOneEquities(@PathVariable id: String): Mono<Void> {
         return useCase.deleteEquitiesById(id)
     }
 
-    @GetMapping(path = [ "/bigger" ])
-    fun findLastGreaterTenEquitiesWithPrice() : Flux<EquitiesEntity> {
-        return useCase.findLastGreaterTenEquitiesWithPrice()
+    @GetMapping(path = ["/bigger"])
+    fun findLastGreaterTenEquitiesWithPrice(): Flux<EquitiesEntity> {
+        return useCase.findLastGreaterTenEquitiesWithPriceWebFluxSequencial()
     }
 
-    @GetMapping(path = [ "/bigger/coroutines" ])
-    suspend fun findLastGreaterTenEquitiesWithPriceWithCoroutines() : List<EquitiesEntity> {
+    @GetMapping(path = ["/bigger/coroutines"])
+    suspend fun findLastGreaterTenEquitiesWithPriceWithCoroutines(): List<EquitiesEntity> {
         return useCase.findLastGreaterTenEquitiesWithPriceWithCoroutines()
     }
 
-    @GetMapping(path = [ "/bigger/onetime" ])
-    suspend fun findLastGreaterTenEquitiesWithPriceWithOneTime() : List<EquitiesEntity> {
-        return useCase.findLastGreaterTenEquitiesWithPriceWithOneTime()
+    @GetMapping(path = ["/bigger/onetime"])
+    suspend fun findLastGreaterTenEquitiesWithPriceWithOneTime(): List<EquitiesEntity> {
+        return useCase.findLastGreaterTenEquitiesWithPriceWithOneTimeWithCoroutines()
     }
 }

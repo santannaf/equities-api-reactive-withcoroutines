@@ -55,7 +55,7 @@ class FinanceYahooApiHttpProviderDataProvider : EquitiesForApiFinanceYahooDataPr
             response,
             object : TypeReference<FinanceYahooApiResponse>() {}).quoteResponse.result.stream()
             .map {
-                ResultApiFinanceYahooEntity(it.regularMarketPrice, it.symbol)
+                ResultApiFinanceYahooEntity(it.regularMarketPrice, it.symbol.replace(Regex(".{3}\$"), ""))
             }.collect(Collectors.toList()).ifEmpty { listOf() }
     }
 }

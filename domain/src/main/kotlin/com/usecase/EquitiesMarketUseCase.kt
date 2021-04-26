@@ -8,7 +8,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.lang.StringBuilder
 import javax.inject.Named
 import kotlin.system.measureTimeMillis
 
@@ -39,7 +38,7 @@ class EquitiesMarketUseCase(
         return dataProvider.deleteOneEquities(id)
     }
 
-    fun findLastGreaterTenEquitiesWithPrice(): Flux<EquitiesEntity> {
+    fun findLastGreaterTenEquitiesWithPriceWebFluxSequencial(): Flux<EquitiesEntity> {
         log.info("Search ten last greater equities into database...")
         return dataProvider.findLastGreaterTenEquitiesWithPriceReactive().map {
             val time = measureTimeMillis {
@@ -67,13 +66,22 @@ class EquitiesMarketUseCase(
         }.awaitAll()
     }
 
-    fun findLastGreaterTenEquitiesWithPriceWithOneTime(): List<EquitiesEntity> {
+    suspend fun findLastGreaterTenEquitiesWithPriceWithOneTimeWithCoroutines(): List<EquitiesEntity> = coroutineScope {
         val equities = dataProvider.findLastGreaterTenEquitiesWithPriceNonReactive()
         val symbols = StringBuilder()
         equities.forEach { symbols.append("${it.code}.SA, ") }
+        val textToRequest =
+            Regex(".\\s*$", RegexOption.MULTILINE).replace(symbols.toString(), "")
+                .replace(Regex("\\s*"), "")
 
-        println(symbols.toString().replace(Regex("/^(.*),/g"), ""))
+        val result = apiFinanceYahoo.equitiesAllPriceMarket(textToRequest)
 
-        return mutableListOf()
+        equities.map { eq ->
+            GlobalScope.async(Dispatchers.Default) {
+                val filtered = result.first { it.symbol == eq.code }
+                eq.price = filtered.regularMarketPrice
+                eq
+            }
+        }.awaitAll()
     }
 }
