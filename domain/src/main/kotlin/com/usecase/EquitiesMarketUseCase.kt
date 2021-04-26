@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.lang.StringBuilder
 import javax.inject.Named
 import kotlin.system.measureTimeMillis
 
@@ -64,5 +65,15 @@ class EquitiesMarketUseCase(
                 it
             }
         }.awaitAll()
+    }
+
+    fun findLastGreaterTenEquitiesWithPriceWithOneTime(): List<EquitiesEntity> {
+        val equities = dataProvider.findLastGreaterTenEquitiesWithPriceNonReactive()
+        val symbols = StringBuilder()
+        equities.forEach { symbols.append("${it.code}.SA, ") }
+
+        println(symbols.toString().replace(Regex("/^(.*),/g"), ""))
+
+        return mutableListOf()
     }
 }

@@ -40,4 +40,9 @@ class EquitiesMarketController(
     suspend fun findLastGreaterTenEquitiesWithPriceWithCoroutines() : List<EquitiesEntity> {
         return useCase.findLastGreaterTenEquitiesWithPriceWithCoroutines()
     }
+
+    @GetMapping(path = [ "/bigger/onetime" ])
+    suspend fun findLastGreaterTenEquitiesWithPriceWithOneTime() : List<EquitiesEntity> {
+        return useCase.findLastGreaterTenEquitiesWithPriceWithOneTime()
+    }
 }
