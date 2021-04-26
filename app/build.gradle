@@ -20,17 +20,15 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
 
 application {
-    mainClass = 'org.gradle.sample.Main'
+    mainClassName = 'org.gradle.sample.Main'
     group = "com.example.inventory-service"
     version = "0.0.1"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        jvmTarget = '11'
-        freeCompilerArgs += '-Xjsr305=strict'
-        suppressWarnings = false
-    }
+[compileKotlin, compileTestKotlin]*.kotlinOptions {
+    jvmTarget = '11'
+    freeCompilerArgs += '-Xjsr305=strict'
+    suppressWarnings = false
 }
 
 repositories {
